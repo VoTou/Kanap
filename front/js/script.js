@@ -1,6 +1,6 @@
-// Déclaration de l'API
 async function apiProducts() {
   try {
+    // Appel de l'API
     let response = await fetch("http://localhost:3000/api/products");
     let data = await response.json();
     console.log(data);
@@ -24,5 +24,3 @@ async function apiProducts() {
   }
 }
 apiProducts();
-
-//
