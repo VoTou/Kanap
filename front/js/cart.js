@@ -1,29 +1,29 @@
 let getProducts = localStorage.getItem("products");
-let productsJson = JSON.parse(getProducts);
-console.log(productsJson);
-
-
+let productsInLocalStorage = JSON.parse(getProducts);
+console.log(productsInLocalStorage);
 
 async function apiProducts() {
     try {
-      // Appel de l'API
-      let response = await fetch(`http://localhost:3000/api/products/`);
-      let data = await response.json();
-      console.log(data);
+
       
+let totalQuantity = parseInt(document.querySelector('#totalQuantity').textContent);
+let totalPrice = document.querySelector('#totalPrice');     
 const productItems = document.querySelector("#cart__items");
-// Boucle pour insérer les produits qui ont été récupérer du localStorage
-for (let product of productsJson) {
+// Boucle pour insérer les produits qui ont été récupérer du localStorage et de l'API
+for (let product of productsInLocalStorage) {
+  let response = await fetch(`http://localhost:3000/api/products/${product.id}`);
+  let data = await response.json();
+  console.log(data);
   productItems.innerHTML += `
   <article class="cart__item" data-id="${product.id} data-color="${product.color}">
                 <div class="cart__item__img">
-                  <img src="" alt="Photographie d'un canapé">
+                  <img src="${data.imageUrl}" alt="${data.altTxt}">
                 </div>
                 <div class="cart__item__content">
                    <div class="cart__item__content__description">
-                    <h2>Nom du produit</h2>
+                    <h2>${data.name}</h2>
                     <p>${product.color}</p>
-                    <p>42,00 €</p>
+                    <p>${data.price} €</p>
                   </div>
                   <div class="cart__item__content__settings">
                     <div class="cart__item__content__settings__quantity">
@@ -37,8 +37,17 @@ for (let product of productsJson) {
                 </div>
               </article>
     `;
+    totalQuantity.textContent += product.quantityProduct;
+    totalPrice.textContent += data.price
 
 };
+console.log(totalQuantity);
+
+
+
+
+
+
 
 document.querySelectorAll('.deleteItem').forEach((btn) => {
   btn.addEventListener('click', () => {
@@ -46,8 +55,11 @@ document.querySelectorAll('.deleteItem').forEach((btn) => {
   });
 });
 
-
-
+document.querySelectorAll('.itemQuantity').forEach((input) => {
+  input.addEventListener('change', () => {
+    document.querySelectorAll('.itemQuantity').dataset.id = 2;
+});  
+});
 
 
 
@@ -56,3 +68,5 @@ document.querySelectorAll('.deleteItem').forEach((btn) => {
   }
 }
 apiProducts();
+
+

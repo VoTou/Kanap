@@ -45,7 +45,7 @@ async function apiProducts() {
       quantity = e.target.value;
     });
 
-    // Ecoute des données entrées par l'utilisateur
+    // Ecoute les données entrées par l'utilisateur
     btnAddToCart.addEventListener("click", () => {
       let product = {
         id: data._id,
