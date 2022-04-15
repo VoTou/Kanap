@@ -16,8 +16,8 @@ async function apiProducts() {
     const price = document.querySelector("#price");
     const description = document.querySelector("#description");
     const colors = document.querySelector("#colors");
-    let color ='';
-    let quantity = '';
+    let color = "";
+    let quantity = "";
 
     img.innerHTML = `
     <img src="${data.imageUrl}" alt"${data.altTxt}">
@@ -30,7 +30,7 @@ async function apiProducts() {
       colors.innerHTML += `
         <option value="${data.colors[i]}">${data.colors[i]}</option>
         `;
-    };
+    }
 
     const btnAddToCart = document.querySelector("#addToCart");
     const colorSelect = document.querySelector("select");
@@ -49,24 +49,25 @@ async function apiProducts() {
     btnAddToCart.addEventListener("click", () => {
       let product = {
         id: data._id,
-        quantityProduct : parseInt(quantity),
-        color: color
-    };
-      let productsInLocalStorage = JSON.parse(localStorage.getItem('products'));
+        quantityProduct: parseInt(quantity),
+        color: color,
+      };
+      let productsInLocalStorage = JSON.parse(localStorage.getItem("products"));
 
       if (productsInLocalStorage == undefined) {
-        localStorage.setItem('products', JSON.stringify([product]))
+        localStorage.setItem("products", JSON.stringify([product]));
       } else {
-        let productFound = productsInLocalStorage.find(p => p.id == product.id && p.color == product.color)
+        let productFound = productsInLocalStorage.find(
+          (p) => p.id == product.id && p.color == product.color
+        )
         if (productFound) {
-          productFound.quantityProduct += product.quantityProduct
+          productFound.quantityProduct += product.quantityProduct;
         } else {
-          productsInLocalStorage.push(product)
+          productsInLocalStorage.push(product);
         }
-        localStorage.setItem('products', JSON.stringify(productsInLocalStorage))
+        localStorage.setItem("products", JSON.stringify(productsInLocalStorage));
       }
     });
-
   } catch (error) {
     console.error(error);
   }
