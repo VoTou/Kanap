@@ -8,6 +8,7 @@ async function apiProducts() {
     const sectionHtml = document.getElementById("items");
     
     //Boucle pour afficher les données des Kanap
+    
     for (let kanap of data) {
       sectionHtml.innerHTML += `
         <a href="./product.html?id=${kanap._id}">
