@@ -2,8 +2,6 @@ let getProducts = localStorage.getItem("products");
 let productsInLocalStorage = JSON.parse(getProducts);
 console.log(productsInLocalStorage);
 
-
-
 async function apiProducts() {
   try {
     let totalQuantity = Number(
@@ -39,13 +37,12 @@ async function apiProducts() {
                     <div class="cart__item__content__settings__delete">
                       <a id='${productId}' class="deleteItem" data-id="${product.id}" data-color="${product.color}" >Supprimer</a>
                     </div>
-                  </div> 
+                  </div>
                 </div>
               </article>
     `;
-      
 
-      // Fonction pour supprimer l'article du localStorage au clic du bouton "Supprimer"
+      // Permet de supprimer l'article du localStorage au clic du bouton "Supprimer"
       document.addEventListener("click", function (e) {
         if (e.target.id === productId) {
           const [idProduct, color] = productId.split("-");
@@ -56,28 +53,44 @@ async function apiProducts() {
           window.location.reload();
         }
       });
-
+      // 
       document.addEventListener("change", function (e) {
         if (e.target.id === `input-${productId}`) {
           const [_, idProduct, color] = `input-${productId}`.split("-");
           const product = productsInLocalStorage.find(
             (p) => p.id == idProduct && p.color == color
           );
-          let quantity = product.quantityProduct;
-          if (product) {
-            product.quantityProduct = e.target.valueAsNumber
+          let productQuantity = parseInt(product.quantityProduct);
+          let newQuantity = parseInt(e.target.value);
+          let productPrice = data.price;
+
+          if (newQuantity > productQuantity) {
+            totalPrice += productPrice;
+            totalPriceShow.innerHTML = totalPrice;
+          } else {
+            totalPrice -= productPrice;
+            totalPriceShow.innerHTML = totalPrice;
           }
-          localStorage.setItem("products", JSON.stringify(productsInLocalStorage));
+
+          if (product) {
+            product.quantityProduct = e.target.valueAsNumber;
+          }
+          localStorage.setItem(
+            "products",
+            JSON.stringify(productsInLocalStorage)
+          );
+          const totalQuantity = productsInLocalStorage
+            .map((product) => parseInt(product.quantityProduct))
+            .reduce((partialSum, a) => partialSum + a, 0);
+          totalQuantityShow.innerHTML = totalQuantity;
         }
       });
-      // Probleme mettre à jour le prix en temps réel
 
       totalQuantity += product.quantityProduct;
       totalPrice += product.quantityProduct * data.price;
       totalQuantityShow.innerHTML = totalQuantity;
       totalPriceShow.innerHTML = totalPrice;
     }
-   
 
     //******************************* Traitement du formulaire ***********************************************/
     const form = document.querySelector(".cart__order__form");
@@ -180,29 +193,31 @@ async function apiProducts() {
         validCity(form.city) &&
         validEmail(form.email)
       ) {
-        const contact = {
-          firstName: form.firstName.value,
-          lastName: form.lastName.value,
-          address: form.address.value,
-          city: form.city.value,
-          email: form.email.value,
-          products: [productsInLocalStorage]
+        const data = {
+          contact: {
+            firstName: form.firstName.value,
+            lastName: form.lastName.value,
+            address: form.address.value,
+            city: form.city.value,
+            email: form.email.value,
+          },
+          products: productsInLocalStorage.map((product) => product.id),
         };
-
-  async function postData(url = `http://localhost:3000/api/products/order`, data = contact ) {
-        const res = await fetch(url,
-         {
+        fetch("http://localhost:3000/api/products/order", {
           method: "POST",
           body: JSON.stringify(data),
           headers: {
             "Content-Type": "application/json",
           },
-        });
-
-        return res.json();
-      }
-
-        //form.submit();
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            const orderId = data.orderId;
+            // Redirection sur la page de confirmation et affichage de l'orderId
+            window.location = "confirmation.html?orderId=" + orderId;
+            console.log(orderId);
+          })
+          .catch((error) => console.error(error));
       }
     });
   } catch (err) {
