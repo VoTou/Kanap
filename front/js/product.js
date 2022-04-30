@@ -2,14 +2,12 @@
 let str = window.location.href;
 let url = new URL(str);
 let id = url.searchParams.get("id");
-console.log(url);
 
 async function apiProducts() {
   try {
     // Appel de l'API
     let response = await fetch(`http://localhost:3000/api/products/${id}`);
     let data = await response.json();
-    console.log(data);
 
     const img = document.querySelector(".item__img");
     const title = document.querySelector("#title");
@@ -64,7 +62,7 @@ async function apiProducts() {
       if (productsInLocalStorage == undefined) {
         localStorage.setItem("products", JSON.stringify([product]));
       } else {
-        // Si le produit à la même couleur et ID alors j'incrémente la quantité sinon j'ajoute le produit
+        // Si je trouve un product du localStorage qui à la même couleur et le même ID alors j'incrémente la quantité sinon j'ajoute le produit
         let productFound = productsInLocalStorage.find(
           (p) => p.id == product.id && p.color == product.color
         );

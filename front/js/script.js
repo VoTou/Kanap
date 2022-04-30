@@ -3,7 +3,6 @@ async function apiProducts() {
     // Appel de l'API
     let response = await fetch("http://localhost:3000/api/products");
     let data = await response.json();
-    console.log(data);
 
     const sectionHtml = document.getElementById("items");
     
