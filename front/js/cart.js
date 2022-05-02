@@ -10,7 +10,7 @@ async function apiProducts() {
         let totalQuantityShow = document.querySelector("#totalQuantity");
         let totalPriceShow = document.querySelector("#totalPrice");
         const productItems = document.querySelector("#cart__items");
-        // Boucle pour insérer les produits qui ont été récupérer du localStorage et de l'API
+        // Boucle pour itérer sur les produits du localStorage et implémentation des produits dans le HTML
         for (let product of productsInLocalStorage) {
             // Récupération des données products
             let response = await fetch(
@@ -41,10 +41,15 @@ async function apiProducts() {
                 </div>
               </article>
     `;
-
-            // Permet de supprimer l'article du localStorage au clic du bouton "Supprimer"
-            document.addEventListener("click", function(e) {
-                if (e.target.id === productIdentification) {
+    // Affichage du prix et de la quantité total du panier
+    totalQuantity += product.quantityProduct;
+    totalPrice += product.quantityProduct * data.price;
+    totalQuantityShow.innerHTML = totalQuantity;
+    totalPriceShow.innerHTML = totalPrice;
+    
+            // Permet de supprimer l'article au clic du bouton "Supprimer"
+            document.addEventListener("click", function(e) { 
+                if (e.target.id  === productIdentification) {
                     // Récupération des valeurs idProduct et color en utilisant .split()
                     const [idProduct, color] = productIdentification.split("-");
                     // Je sauvegarde les produits qui ont une couleur et une id différente du produit sur lequel je click
@@ -55,7 +60,7 @@ async function apiProducts() {
                     window.location.reload();
                 }
             });
-            //
+            //  Permet de modifier le quantité du produit
             document.addEventListener("change", function(e) {
                 if (e.target.id === `input-${productIdentification}`) {
                     // Récupération des valeurs idProduct et color en utilisant .split() et en ignorant la première valeur qui est 'input'
@@ -86,15 +91,11 @@ async function apiProducts() {
                     // Mise à jour de la quantité total
                     const totalQuantity = productsInLocalStorage
                         .map((product) => parseInt(product.quantityProduct))
-                        .reduce((partialSum, a) => partialSum + a, 0);
+                        .reduce((partialSum, a) => partialSum + a, 0); // .reduce((previousValue, currentValue) => previousValue + currentValue, initialValue); fonction qui est un « accumulateur » 
                     totalQuantityShow.innerHTML = totalQuantity;
                 }
             });
-            // Affichage du prix et de la quantité total du panier
-            totalQuantity += product.quantityProduct;
-            totalPrice += product.quantityProduct * data.price;
-            totalQuantityShow.innerHTML = totalQuantity;
-            totalPriceShow.innerHTML = totalPrice;
+            
         }
 
         //******************************* Traitement du formulaire ***********************************************/
@@ -142,15 +143,16 @@ async function apiProducts() {
             return validateInput(this, emailRegExp, emailErrorMsg, "Adresse Email Invalide")
         });
 
+
         // Envoie du formulaire si toutes les données sont validées et création de l'objet contact contenant les données des produits
         form.addEventListener("submit", function(e) {
             e.preventDefault();
             if (
-                validFirstName(form.firstName) &&
-                validLastName(form.lastName) &&
-                validAddress(form.address) &&
-                validCity(form.city) &&
-                validEmail(form.email)
+                form.firstName &&
+                form.lastName &&
+                form.address &&
+                form.city &&
+                form.email
             ) {
                 const data = {
                     contact: {
